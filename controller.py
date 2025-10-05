@@ -70,13 +70,12 @@ GPIO.add_event_detect(ESTOP_PIN, GPIO.RISING, callback=emergency_stop_callback, 
 # --- メインループ ---
 def main():
     try:
-        print("サーボ制御プログラムを開始します。JSONコマンドを待っています...")
-        while True:
-            # 標準入力からJSONコマンドを読み取る
-            try:
-                line = input()
-                command = json.loads(line)
+        print("サーボ制御プログラムを開始します。commands.jsonからコマンドを読み込みます...")
+        with open('commands.json', 'r') as f:
+            commands = json.load(f)
 
+        for command in commands:
+            try:
                 mode = command.get('mode')
                 if mode == 'rotate':
                     angle = command.get('angle', 0)
@@ -89,20 +88,21 @@ def main():
                     duty = angle_to_duty(angle)
                     pwm.ChangeDutyCycle(duty)
                     print(f"サーボを角度 {angle} 度、速度 {speed} %で回転させます。")
+                    time.sleep(2) # 次のコマンドの前に2秒待機
 
                 elif mode == 'stop':
                     print("サーボを停止します。")
                     pwm.ChangeDutyCycle(0)
+                    time.sleep(1)
                 else:
                     print(f"未定義のモードです: {mode}")
 
-            except json.JSONDecodeError:
-                print("無効なJSON形式です。")
             except (KeyboardInterrupt, SystemExit):
                 raise # クリーンアップのために例外を再送出
             except Exception as e:
-                print(f"エラーが発生しました: {e}")
-
+                print(f"コマンド '{command}' の実行中にエラーが発生しました: {e}")
+        
+        print("全てのコマンドが完了しました。")
 
     finally:
         cleanup()
