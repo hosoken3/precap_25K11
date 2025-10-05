@@ -1,10 +1,7 @@
-以下のコードは、Raspberry Pi 標準の RPi.GPIO モジュール（あらかじめプリインストール済み）以外を追加インストールせずに動作します。
-
-```python
 #!/usr/bin/env python3
 import time
 import json
-import RPi.GPIO as GPIO
+from fake_rpi.RPi import GPIO
 
 # --- 設定 ---
 PWM_PIN    = 18      # BCM番号（物理ピン12）
@@ -47,14 +44,3 @@ if __name__ == "__main__":
     finally:
         pwm.stop()
         GPIO.cleanup()
-```
-
-――――――――――  
-実行方法:
-
-```bash
-$ chmod +x controller.py
-$ ./controller.py
-```
-
-このスクリプトは追加ライブラリ不要で、GPIO 経由の PWM だけでサーボを動かす最小構成です。
