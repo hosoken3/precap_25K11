@@ -1,60 +1,82 @@
-以下のコードは、Raspberry Pi 標準の RPi.GPIO モジュール（あらかじめプリインストール済み）以外を追加インストールせずに動作します。
+# 追加機能定義書：回転ログ CSV 記録と非常停止ボタン
 
-```python
-#!/usr/bin/env python3
-import time
-import json
-import RPi.GPIO as GPIO
+system_name: “RaspberryPi-Servo-Control-With-Logging-And-ESTOP”  
+version: “0.2”  
+date: “2025-10-05”
 
-# --- 設定 ---
-PWM_PIN    = 18      # BCM番号（物理ピン12）
-FREQ       = 50      # サーボ制御用 50Hz
-NEUTRAL    = 7.5     # 中立位置デューティ（%）
-DC_PER_DEG = 5.0/180 # ±90°→±5%デューティを想定
+components:
 
-# --- 初期化 ---
-GPIO.setmode(GPIO.BCM)
-GPIO.setup(PWM_PIN, GPIO.OUT)
-pwm = GPIO.PWM(PWM_PIN, FREQ)
-pwm.start(NEUTRAL)
+- name: “Raspberry Pi 5”  
+  role: “中央制御ユニット + ログ記録 + 非常停止監視”  
+  language: “Python 3.x”  
+  libraries:
+  - RPi.GPIO # 標準インストール済み
+  - csv # 標準ライブラリ
+  - time # 標準ライブラリ
+  - json # 標準ライブラリ
 
-def rotate(angle, speed):
-    """
-    angle: -90〜+90 (°)
-    speed: 0〜100 (%)
-    """
-    duty = NEUTRAL + (angle * DC_PER_DEG) * (speed / 100.0)
-    pwm.ChangeDutyCycle(duty)
+hardware_interfaces:
 
-def main():
-    # テストコマンドを JSON 文字列で記述
-    cmd_json = '{"mode":"rotate","angle":45,"speed":75}'
-    cmd = json.loads(cmd_json)
+- name: “PWM 出力”  
+  gpio_pin: 18  
+  desc: “サーボアンプへの制御信号（50Hz PWM）”
+- name: “非常停止ボタン入力”  
+  gpio_pin: 23  
+  desc: “GPIO23 に接続、GND プルダウン方式”
 
-    if cmd.get("mode") == "rotate":
-        rotate(cmd["angle"], cmd["speed"])
-        print(f"Rotate → angle={cmd['angle']}°, speed={cmd['speed']}%")
-    time.sleep(3)
+logging:  
+ enabled: true  
+ file: “rotation_log.csv”  
+ fields:
 
-    # 中立に戻す
-    rotate(0, 0)
-    print("Stop")
-    time.sleep(1)
+- timestamp # Unix 時間秒
+- angle_deg # 指令角度 (°)
+- speed_pct # 指令速度 (%)
+- estimated_nm # 推定トルク (Nm)
 
-if __name__ == "__main__":
-    try:
-        main()
-    finally:
-        pwm.stop()
-        GPIO.cleanup()
-```
+estimated_torque:  
+ method: “speed_pct ÷ 100 × 最大トルク”  
+ max_torque_nm: 55
 
-――――――――――  
-実行方法:
+emergency_stop:  
+ button_gpio: 23  
+ logic:
 
-```bash
-$ chmod +x controller.py
-$ ./controller.py
-```
+- ボタン押下 (GPIO.HIGH) で即時 pwm.stop() およびログファイルクローズ
+- プログラム全体終了
 
-このスクリプトは追加ライブラリ不要で、GPIO 経由の PWM だけでサーボを動かす最小構成です。
+command_schema:
+
+- field: “mode”  
+  type: “string”  
+  description: “rotate または stop”
+- field: “angle”  
+  type: “integer”  
+  unit: “degrees”
+- field: “speed”  
+  type: “integer”  
+  unit: “%”
+
+example_command:  
+ format: JSON  
+ content: |  
+ {  
+ "mode": "rotate",  
+ "angle": 30,  
+ "speed": 80  
+ }
+
+safety:
+
+- “非常停止ボタン押下で全動作を即時停止”
+- “ログ記録中もボタン入力を常時監視”
+- “例外発生時にも GPIO.cleanup() とログファイルクローズを保証”
+
+---
+
+# ディレクトリ構成（更新版）
+
+今いる dir
+├── controller.py # 制御＋ CSV ログ＋非常停止機能  
+├── rotation_log.csv # ログ出力ファイル（空ファイルで用意）  
+└── README.md # 実行手順・回路接続図記載 ```
