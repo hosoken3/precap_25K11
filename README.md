@@ -51,49 +51,49 @@
 
 # How to Use the Servo Motor Control Program
 
-This program simplifies controlling the movement of a servo motor. Simply write the desired movements into a file named `commands.json`, and it will move the motor accordingly while automatically saving a log of the movements.
+This program makes it easy to control a servo motor. Write your desired movements into the `commands.json` file, and the motor will execute them automatically while saving a log of all actions.
 
 ## How to Use
 
-1.  **Configure Movement (`commands.json`)**
-    Open the `commands.json` file and describe the desired motor movements in JSON format. You can freely set the angle (`angle`) and speed (`speed`).
+1. **Configure Movement (`commands.json`)**  
+   Open the `commands.json` file and describe the motor's movements in JSON format. Set the angle (`angle`) and speed (`speed`) as needed.
 
-    **Example configuration:**
-```json
+   **Example:**
 [
-  {
-    “mode”: “rotate”,
-    “angle”: 90,
-    “angle_unit”: “degrees”,
-    “speed”: 50,
-    “speed_unit”: “%”
-      },
-      {
-        “mode”: “rotate”,
-        “angle”: 0,
-        “angle_unit”: “degrees”,
-        “speed”: 30,
-        “speed_unit”: “%”
-      }
-    ]
-    ```
-    - `mode`: Choose either `“rotate”` or `“stop”`.
-    - `angle`: Specify the motor angle between 0 and 180 degrees.
-    - `speed`: Specify the motor speed as a percentage between 0 and 100.
+{
+"mode": "rotate",
+"angle": 90,
+"angle_unit": "degrees",
+"speed": 50,
+"speed_unit": "%"
+},
+{
+"mode": "rotate",
+"angle": 0,
+"angle_unit": "degrees",
+"speed": 30,
+"speed_unit": "%"
+}
+]
 
-2.  **Run the program (`controller.py`)**
-    Running `controller.py` will start the motor according to the commands written in `commands.json`.
+text
+- `mode`: `"rotate"` or `"stop"`.
+- `angle`: Motor angle between 0 and 180 degrees.
+- `speed`: Motor speed as a percentage (0–100).
 
-3.  **Check the results (`rotation_log.csv`)**
-    When the program runs, the motor's movements are recorded in a file named `rotation_log.csv`. Opening this file allows you to see when and under what instructions the motor moved.
+2. **Run the program (`controller.py`)**  
+Execute `controller.py` to start the motor according to the instructions in `commands.json`.
+
+3. **Check the results (`rotation_log.csv`)**  
+The motor's movements are recorded in `rotation_log.csv`. Open this file to see when and under what commands the motor moved.
 
 ## File Roles
 
--   `controller.py`: The main program. This is the file you run.
--   `commands.json`: A configuration file where you write instructions for the motor's movements.
--   `rotation_log.csv`: The log file where motor movement records are saved.
--   `README.md`: This file. It describes how to use the program.
+- `controller.py`: Main program to run.
+- `commands.json`: Movement instruction file.
+- `rotation_log.csv`: Log file of motor movements.
+- `README.md`: This document.
 
 ## Safety Feature: Emergency Stop Button
 
-This system includes an emergency stop button connected to GPIO pin 23. In case of an emergency, pressing this button immediately stops all operations and safely terminates the program.
+An emergency stop button is connected to GPIO pin 23. Pressing it instantly stops all operations and safely terminates the program.
