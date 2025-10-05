@@ -1,60 +1,48 @@
-以下のコードは、Raspberry Pi 標準の RPi.GPIO モジュール（あらかじめプリインストール済み）以外を追加インストールせずに動作します。
+# サーボモーター制御プログラムの使い方
 
-```python
-#!/usr/bin/env python3
-import time
-import json
-import RPi.GPIO as GPIO
+このプログラムは、サーボモーターの動きをかんたんに制御するためのものです。`commands.json`というファイルに動かしたい内容を書き込むだけで、その通りにモーターを動かし、動きの記録（ログ）を自動で保存してくれます。
 
-# --- 設定 ---
-PWM_PIN    = 18      # BCM番号（物理ピン12）
-FREQ       = 50      # サーボ制御用 50Hz
-NEUTRAL    = 7.5     # 中立位置デューティ（%）
-DC_PER_DEG = 5.0/180 # ±90°→±5%デューティを想定
+## 使い方
 
-# --- 初期化 ---
-GPIO.setmode(GPIO.BCM)
-GPIO.setup(PWM_PIN, GPIO.OUT)
-pwm = GPIO.PWM(PWM_PIN, FREQ)
-pwm.start(NEUTRAL)
+1.  **動かし方を設定する (`commands.json`)**
+    `commands.json`ファイルを開き、モーターにさせたい動きをJSON形式で記述します。角度（`angle`）や速さ（`speed`）を自由に設定できます。
 
-def rotate(angle, speed):
-    """
-    angle: -90〜+90 (°)
-    speed: 0〜100 (%)
-    """
-    duty = NEUTRAL + (angle * DC_PER_DEG) * (speed / 100.0)
-    pwm.ChangeDutyCycle(duty)
+    **設定例:**
+    ```json
+    [
+      {
+        "mode": "rotate",
+        "angle": 90,
+        "angle_unit": "degrees",
+        "speed": 50,
+        "speed_unit": "%"
+      },
+      {
+        "mode": "rotate",
+        "angle": 0,
+        "angle_unit": "degrees",
+        "speed": 30,
+        "speed_unit": "%"
+      }
+    ]
+    ```
+    - `mode`: `"rotate"`（回転）か`"stop"`（停止）を選びます。
+    - `angle`: モーターの角度を0度から180度の間で指定します。
+    - `speed`: モーターの速さを0から100の間のパーセンテージで指定します。
 
-def main():
-    # テストコマンドを JSON 文字列で記述
-    cmd_json = '{"mode":"rotate","angle":45,"speed":75}'
-    cmd = json.loads(cmd_json)
+2.  **プログラムを実行する (`controller.py`)**
+    `controller.py`を実行すると、`commands.json`に書かれた内容に従ってモーターが動き始めます。
 
-    if cmd.get("mode") == "rotate":
-        rotate(cmd["angle"], cmd["speed"])
-        print(f"Rotate → angle={cmd['angle']}°, speed={cmd['speed']}%")
-    time.sleep(3)
+3.  **結果を確認する (`rotation_log.csv`)**
+    プログラムが動くと、モーターの動きが`rotation_log.csv`というファイルに記録されます。このファイルを開くと、いつ、どのような指示でモーターが動いたかを確認できます。
 
-    # 中立に戻す
-    rotate(0, 0)
-    print("Stop")
-    time.sleep(1)
+## ファイルの役割
 
-if __name__ == "__main__":
-    try:
-        main()
-    finally:
-        pwm.stop()
-        GPIO.cleanup()
-```
+-   `controller.py`: メインのプログラムです。このファイルを実行します。
+-   `commands.json`: モーターの動きの指示を書き込む設定ファイルです。
+-   `rotation_log.csv`: モーターの動きの記録が保存されるログファイルです。
+-   `README.md`: このファイルです。プログラムの使い方が書かれています。
 
-――――――――――  
-実行方法:
+## 安全機能：非常停止ボタン
 
-```bash
-$ chmod +x controller.py
-$ ./controller.py
-```
-
-このスクリプトは追加ライブラリ不要で、GPIO 経由の PWM だけでサーボを動かす最小構成です。
+このシステムには、GPIOピン23に接続された非常停止ボタンがあります。万が一の際には、このボタンを押すことで、ただちにすべての動作を停止し、安全にプログラムを終了できます。

@@ -1,0 +1,26 @@
+[
+  {
+    "mode": "rotate",
+    "angle": 90,
+    "angle_unit": "degrees",
+    "speed": 50,
+    "speed_unit": "%"
+  },
+  {
+    "mode": "rotate",
+    "angle": 0,
+    "angle_unit": "degrees",
+    "speed": 30,
+    "speed_unit": "%"
+  },
+  {
+    "mode": "rotate",
+    "angle": 180,
+    "angle_unit": "degrees",
+    "speed": 90,
+    "speed_unit": "%"
+  },
+  {
+    "mode": "stop"
+  }
+]
