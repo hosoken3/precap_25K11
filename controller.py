@@ -3,6 +3,7 @@ import time
 import json
 import csv
 import sys
+import os
 
 # fake_rpi を RPi.GPIO としてインポート
 try:
@@ -27,9 +28,13 @@ pwm = GPIO.PWM(SERVO_PIN, 50)
 pwm.start(0)
 
 # --- ログファイル初期化 ---
-log_file_obj = open(LOG_FILE, 'w', newline='')
+log_file_exists = os.path.exists(LOG_FILE)
+log_file_obj = open(LOG_FILE, 'a', newline='') # 'a' (追記) モードで開く
 csv_writer = csv.writer(log_file_obj)
-csv_writer.writerow(['timestamp', 'angle_deg', 'speed_pct', 'estimated_nm'])
+
+if not log_file_exists:
+    # ファイルが新規作成された場合のみヘッダーを書き込む
+    csv_writer.writerow(['timestamp', 'angle_deg', 'speed_pct', 'estimated_nm'])
 
 # --- 関数定義 ---
 
