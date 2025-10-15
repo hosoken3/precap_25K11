@@ -36,6 +36,12 @@
 3.  **結果を確認する (`rotation_log.csv`)**
     プログラムが動くと、モーターの動きが`rotation_log.csv`というファイルに記録されます。このファイルを開くと、いつ、どのような指示でモーターが動いたかを確認できます。
 
+4.  **GUIから実行する (`UI.py`)**
+    `UI.py`を実行すると、GUIウィンドウが立ち上がります。「Run controller.py」ボタンをクリックすると、`controller.py`が実行されます。
+    ```bash
+    python UI.py
+    ```
+
 ## ファイルの役割
 
 -   `controller.py`: メインのプログラムです。このファイルを実行します。
@@ -86,6 +92,12 @@ Execute `controller.py` to start the motor according to the instructions in `com
 
 3. **Check the results (`rotation_log.csv`)**  
 The motor's movements are recorded in `rotation_log.csv`. Open this file to see when and under what commands the motor moved.
+
+4. **Run from GUI (`UI.py`)**  
+   Execute `UI.py` to launch a GUI window. Click the "Run controller.py" button to run `controller.py`.
+   ```bash
+   python UI.py
+   ```
 
 ## File Roles
 
