@@ -14,7 +14,7 @@ except (RuntimeError, ModuleNotFoundError):
 # --- 設定 ---
 SERVO_PIN = 18
 ESTOP_PIN = 23
-LOG_FILE = 'rotation_log.csv'
+LOG_FILE = 'execution_log.csv'
 MAX_TORQUE_NM = 55
 
 # --- GPIO 初期化 ---

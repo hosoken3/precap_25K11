@@ -33,8 +33,8 @@
 2.  **プログラムを実行する (`controller.py`)**
     `controller.py`を実行すると、`commands.json`に書かれた内容に従ってモーターが動き始めます。
 
-3.  **結果を確認する (`rotation_log.csv`)**
-    プログラムが動くと、モーターの動きが`rotation_log.csv`というファイルに記録されます。このファイルを開くと、いつ、どのような指示でモーターが動いたかを確認できます。
+3.  **結果を確認する (`execution_log.csv`)**
+    プログラムが動くと、モーターの動きが`execution_log.csv`というファイルに記録されます。このファイルを開くと、いつ、どのような指示でモーターが動いたかを確認できます。
 
 4.  **GUIから実行する (`UI.py`)**
     `UI.py`を実行すると、GUIウィンドウが立ち上がります。「Run controller.py」ボタンをクリックすると、`controller.py`が実行されます。
@@ -46,7 +46,7 @@
 
 -   `controller.py`: メインのプログラムです。このファイルを実行します。
 -   `commands.json`: モーターの動きの指示を書き込む設定ファイルです。
--   `rotation_log.csv`: モーターの動きの記録が保存されるログファイルです。
+-   `execution_log.csv`: モーターの動きの記録が保存されるログファイルです。
 -   `README.md`: このファイルです。プログラムの使い方が書かれています。
 
 ## 安全機能：非常停止ボタン
@@ -90,8 +90,8 @@ text
 2. **Run the program (`controller.py`)**  
 Execute `controller.py` to start the motor according to the instructions in `commands.json`.
 
-3. **Check the results (`rotation_log.csv`)**  
-The motor's movements are recorded in `rotation_log.csv`. Open this file to see when and under what commands the motor moved.
+3. **Check the results (`execution_log.csv`)**  
+The motor's movements are recorded in `execution_log.csv`. Open this file to see when and under what commands the motor moved.
 
 4. **Run from GUI (`UI.py`)**  
    Execute `UI.py` to launch a GUI window. Click the "Run controller.py" button to run `controller.py`.
@@ -103,7 +103,7 @@ The motor's movements are recorded in `rotation_log.csv`. Open this file to see 
 
 - `controller.py`: Main program to run.
 - `commands.json`: Movement instruction file.
-- `rotation_log.csv`: Log file of motor movements.
+- `execution_log.csv`: Log file of motor movements.
 - `README.md`: This document.
 
 ## Safety Feature: Emergency Stop Button
